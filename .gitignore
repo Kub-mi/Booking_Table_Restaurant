@@ -1,0 +1,114 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# === Django ===
+*.log
+db.sqlite3
+media/
+staticfiles/
+static_root/
+local_settings.py
+.DS_Store
+
+# === Migrations ===
+**/migrations/__pycache__/
+**/migrations/*.pyc
+**/migrations/*.py~
+# Можно закомментировать следующую строку, если хочешь версионировать миграции
+# **/migrations/*
+
+# === IDE / Editors ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Tests ===
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+coverage.xml
+*.cover
+*.py,cover
+.cache
+nosetests.xml
+test-results/
+junit.xml
+
+# === Environments & Packages ===
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+*.manifest
+*.spec
+
+# === Node / Frontend ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+
+# === Docker ===
+docker-compose.override.yml
+.docker/
+*.pid
+*.sock
+
+# === Security / Secrets ===
+*.pem
+*.key
+*.crt
+*.p12
+*.env
+.env.*
+
+# === Other ===
+.idea/
+.vscode/
+*.bak
+*.swp
+*.tmp
+*.log
+*.old
+*.orig
+
+# === Jupyter / Notebooks ===
+.ipynb_checkpoints
+
+# === PyInstaller ===
+*.manifest
+*.spec
+
+# === Celery / Redis ===
+celerybeat-schedule
+celerybeat.pid
+
+# === VSCode local history ===
+.history/
