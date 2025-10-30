@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <h1 class="fw-bold mb-4 text-center">Вход</h1>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+            <div class="mb-3">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </div>
+        </form>
+        <p class="text-center mt-3 mb-0">Впервые у нас? <a href="{% url 'users:register' %}">Создайте аккаунт</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <h1 class="fw-bold mb-4 text-center">Создайте аккаунт</h1>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+                {% if form.username.help_text %}
+                    <div class="form-text">{{ form.username.help_text }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+            <div class="mb-3">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+                {% if form.password1.help_text %}
+                    <div class="form-text">{{ form.password1.help_text }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+                {% if form.password2.help_text %}
+                    <div class="form-text">{{ form.password2.help_text }}</div>
+                {% endif %}
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            </div>
+        </form>
+        <p class="text-center mt-3 mb-0">Уже зарегистрированы? <a href="{% url 'users:login' %}">Войдите</a></p>
+    </div>
+</div>
+{% endblock %}

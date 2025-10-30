@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Бронирование столика | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <h1 class="fw-bold mb-3">Оформите бронь</h1>
+        <p class="text-muted">Выберите удобные дату и время. Мы подтвердим бронь в ближайшее время.</p>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.phone.label_tag }}
+                    {{ form.phone }}
+                    {{ form.phone.errors }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form.date.label_tag }}
+                    {{ form.date }}
+                    {{ form.date.errors }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.time.label_tag }}
+                    {{ form.time }}
+                    {{ form.time.errors }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form.party_size.label_tag }}
+                    {{ form.party_size }}
+                    {{ form.party_size.errors }}
+                </div>
+            </div>
+            <div class="mb-3">
+                {{ form.table.label_tag }}
+                {{ form.table }}
+                {{ form.table.errors }}
+            </div>
+            <div class="mb-3">
+                {{ form.notes.label_tag }}
+                {{ form.notes }}
+                {{ form.notes.errors }}
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Отправить запрос</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Доступные столики</h5>
+                <p class="text-muted">Уточните дату, время и количество гостей, чтобы увидеть подходящие варианты.</p>
+                <form method="get" class="row g-2 mb-3">
+                    <div class="col-12">
+                        <label class="form-label" for="id_filter_date">Дата</label>
+                        <input type="date" name="date" id="id_filter_date" value="{{ filters.date }}" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="id_filter_time">Время</label>
+                        <input type="time" name="time" id="id_filter_time" value="{{ filters.time }}" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="id_filter_party">Гостей</label>
+                        <input type="number" name="party_size" id="id_filter_party" value="{{ filters.party_size }}" min="1" max="20" class="form-control">
+                    </div>
+                    <div class="col-12 d-grid">
+                        <button class="btn btn-outline-primary" type="submit">Проверить доступность</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush table-availability">
+                    {% for table in available_tables %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ table.name }}</span>
+                            <span class="badge bg-primary rounded-pill">{{ table.capacity }} гостей</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">Нет столиков, удовлетворяющих выбранным условиям.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

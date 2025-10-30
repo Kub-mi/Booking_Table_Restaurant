@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}О нас | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<section class="mb-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="fw-bold mb-3">Наша история</h1>
+            <p>{{ restaurant.description|default:'Мы основали ресторан из любви к гастрономии, соединяя современные техники и классические рецепты ради ярких впечатлений гостей.' }}</p>
+            {% if restaurant.mission %}
+                <div class="mt-4">
+                    <h3 class="h5 fw-bold">Наша миссия</h3>
+                    <p>{{ restaurant.mission }}</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Приходите в гости</h5>
+                    <ul class="list-unstyled mb-0">
+                        {% if restaurant.address %}<li class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i>{{ restaurant.address }}</li>{% endif %}
+                        {% if restaurant.phone %}<li class="mb-2"><i class="bi bi-telephone text-primary me-2"></i>{{ restaurant.phone }}</li>{% endif %}
+                        {% if restaurant.email %}<li class="mb-2"><i class="bi bi-envelope text-primary me-2"></i>{{ restaurant.email }}</li>{% endif %}
+                        {% if restaurant.opening_hours %}<li><i class="bi bi-clock text-primary me-2"></i>{{ restaurant.opening_hours }}</li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 class="fw-bold mb-4">Команда</h2>
+    <div class="row g-4">
+        {% for member in team_members %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    {% if member.photo_url %}
+                        <img src="{{ member.photo_url }}" class="card-img-top" alt="{{ member.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">{{ member.name }}</h5>
+                        <p class="text-primary mb-2">{{ member.role }}</p>
+                        <p class="card-text text-muted">{{ member.bio|default:'Скоро мы расскажем о каждом участнике команды.' }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-light border">Мы готовим материалы о нашей команде. Загляните позже!</div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

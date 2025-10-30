@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Добро пожаловать | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<section class="hero text-center text-lg-start">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3">{{ restaurant.name|default:'Ваш следующий гастрономический опыт' }}</h1>
+                <p class="lead mb-4">{{ restaurant.tagline|default:'Бронируйте столик и наслаждайтесь изысканной кухней из сезонных продуктов.' }}</p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <a href="{% url 'reservations:create' %}" class="btn btn-primary btn-lg"><i class="bi bi-calendar-check me-2"></i>Забронировать столик</a>
+                    <a href="{% url 'core:about' %}" class="btn btn-outline-light btn-lg">Узнать подробнее</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="fw-bold mb-3">О нашем ресторане</h2>
+                <p>{{ restaurant.description|default:'Мы создаём незабываемые вечера с изысканными блюдами и гостеприимной атмосферой.' }}</p>
+                {% if restaurant.opening_hours %}
+                    <p class="mb-0"><strong>Часы работы:</strong> {{ restaurant.opening_hours }}</p>
+                {% endif %}
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Свяжитесь с нами</h5>
+                        <ul class="list-unstyled">
+                            {% if restaurant.address %}<li><i class="bi bi-geo-alt-fill me-2 text-primary"></i>{{ restaurant.address }}</li>{% endif %}
+                            {% if restaurant.phone %}<li><i class="bi bi-telephone-fill me-2 text-primary"></i>{{ restaurant.phone }}</li>{% endif %}
+                            {% if restaurant.email %}<li><i class="bi bi-envelope-fill me-2 text-primary"></i>{{ restaurant.email }}</li>{% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Наши услуги</h2>
+            <p class="text-muted">Узнайте, почему мы идеальное место для вашего мероприятия.</p>
+        </div>
+        <div class="row g-4">
+            {% for service in services %}
+                <div class="col-md-4">
+                    <div class="card service-card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            {% if service.icon %}<i class="{{ service.icon }} text-primary fs-1 mb-3"></i>{% endif %}
+                            <h5 class="card-title">{{ service.title }}</h5>
+                            <p class="card-text text-muted">{{ service.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">Список услуг скоро будет доступен.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Наша команда</h2>
+                <p class="text-muted">Преданные своему делу сотрудники создают для гостей тёплую и вдохновляющую атмосферу.</p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-4">
+                    {% for member in team_members|slice:':4' %}
+                        <div class="col-sm-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        {% if member.photo_url %}
+                                            <img src="{{ member.photo_url }}" alt="{{ member.name }}" class="rounded-circle" width="80" height="80">
+                                        {% else %}
+                                            <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width:80px;height:80px;">
+                                                <i class="bi bi-person-fill fs-1 text-secondary"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <h6 class="fw-bold mb-1">{{ member.name }}</h6>
+                                    <p class="text-primary mb-2">{{ member.role }}</p>
+                                    <p class="text-muted small mb-0">{{ member.bio|truncatewords:20 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-light border">Информация о команде появится в ближайшее время.</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-4 text-center">Напишите нам</h3>
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            {{ form.non_field_errors }}
+                            <div class="mb-3">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.message.label_tag }}
+                                {{ form.message }}
+                                {{ form.message.errors }}
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Отправить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

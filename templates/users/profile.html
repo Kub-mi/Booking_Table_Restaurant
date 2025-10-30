@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h4 fw-bold mb-4">Данные профиля</h2>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-3">
+                        {{ form.first_name.label_tag }}
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.last_name.label_tag }}
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h4 fw-bold mb-0">Ближайшие бронирования</h2>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'reservations:list' %}">Все бронирования</a>
+                </div>
+                <div class="table-responsive flex-grow-1">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Дата</th>
+                                <th scope="col">Время</th>
+                                <th scope="col">Столик</th>
+                                <th scope="col">Гостей</th>
+                                <th scope="col">Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations|slice:':5' %}
+                                <tr>
+                                    <td>{{ reservation.date|date:'d.m' }}</td>
+                                    <td>{{ reservation.time|time:'H:i' }}</td>
+                                    <td>{{ reservation.table.name }}</td>
+                                    <td>{{ reservation.party_size }}</td>
+                                    <td>
+                                        {% if reservation.status == 'confirmed' %}
+                                            <span class="badge bg-success">Подтверждено</span>
+                                        {% elif reservation.status == 'cancelled' %}
+                                            <span class="badge bg-secondary">Отменено</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">В ожидании</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-5">Пока нет бронирований. <a href="{% url 'reservations:create' %}">Забронируйте первый столик.</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Изменение бронирования | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4">Изменить бронирование</h1>
+<form method="post" class="row g-3">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="col-md-6">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+        {{ form.name.errors }}
+    </div>
+    <div class="col-md-6">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>
+    <div class="col-md-6">
+        {{ form.phone.label_tag }}
+        {{ form.phone }}
+        {{ form.phone.errors }}
+    </div>
+    <div class="col-md-3">
+        {{ form.date.label_tag }}
+        {{ form.date }}
+        {{ form.date.errors }}
+    </div>
+    <div class="col-md-3">
+        {{ form.time.label_tag }}
+        {{ form.time }}
+        {{ form.time.errors }}
+    </div>
+    <div class="col-md-4">
+        {{ form.party_size.label_tag }}
+        {{ form.party_size }}
+        {{ form.party_size.errors }}
+    </div>
+    <div class="col-md-8">
+        {{ form.table.label_tag }}
+        {{ form.table }}
+        {{ form.table.errors }}
+    </div>
+    <div class="col-12">
+        {{ form.notes.label_tag }}
+        {{ form.notes }}
+        {{ form.notes.errors }}
+    </div>
+    <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a class="btn btn-outline-secondary" href="{% url 'reservations:list' %}">Назад</a>
+    </div>
+</form>
+{% endblock %}

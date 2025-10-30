@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои бронирования | Ресторан «Booking Table»{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-0">Мои бронирования</h1>
+        <p class="text-muted mb-0">Управляйте текущими и прошлыми бронями.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'reservations:create' %}"><i class="bi bi-plus-lg me-2"></i>Новое бронирование</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Время</th>
+                <th scope="col">Столик</th>
+                <th scope="col">Гостей</th>
+                <th scope="col">Статус</th>
+                <th scope="col" class="text-end">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.date|date:'d.m.Y' }}</td>
+                    <td>{{ reservation.time|time:'H:i' }}</td>
+                    <td>{{ reservation.table.name }}</td>
+                    <td>{{ reservation.party_size }}</td>
+                    <td>
+                        {% if reservation.status == 'confirmed' %}
+                            <span class="badge bg-success">Подтверждено</span>
+                        {% elif reservation.status == 'cancelled' %}
+                            <span class="badge bg-secondary">Отменено</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">В ожидании</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-outline-secondary" href="{% url 'reservations:update' reservation.pk %}">Изменить</a>
+                            <form action="{% url 'reservations:cancel' reservation.pk %}" method="post" onsubmit="return confirm('Отменить это бронирование?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger" {% if reservation.status == 'cancelled' %}disabled{% endif %}>Отменить</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-5">У вас пока нет бронирований.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

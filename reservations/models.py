@@ -1,64 +1,95 @@
-from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils import timezone
 
 
 class Table(models.Model):
-    """Информация о столе в ресторане."""
-    number = models.PositiveIntegerField(unique=True, verbose_name="Номер стола")
-    seats = models.PositiveIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(20)],
-        verbose_name="Количество мест"
+    """Representation of a table that can be reserved in the restaurant."""
+
+    name = models.CharField(max_length=100, unique=True)
+    capacity = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(20)]
     )
-    description = models.CharField(max_length=255, blank=True, verbose_name="Описание")
+    location_description = models.CharField(max_length=255, blank=True)
 
     class Meta:
-        ordering = ["number"]
-        verbose_name = "Стол"
-        verbose_name_plural = "Столы"
+        ordering = ["name"]
+        verbose_name = "Столик"
+        verbose_name_plural = "Столики"
 
-    def __str__(self):
-        return f"Стол #{self.number} ({self.seats} мест)"
+    def __str__(self) -> str:
+        return f"{self.name} ({self.capacity} гостей)"
 
 
-class Booking(models.Model):
-    """Бронирование столика пользователем."""
-    STATUS_CHOICES = [
-        ("new", "Новое"),
-        ("confirmed", "Подтверждено"),
-        ("cancelled", "Отменено"),
-    ]
+class ReservationQuerySet(models.QuerySet):
+    def active(self):
+        return self.exclude(status=Reservation.Status.CANCELLED)
 
+    def upcoming(self):
+        now = timezone.localtime()
+        return self.active().filter(date__gte=now.date())
+
+
+class Reservation(models.Model):
+    """A reservation made for a specific table and time slot."""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "В ожидании"
+        CONFIRMED = "confirmed", "Подтверждено"
+        CANCELLED = "cancelled", "Отменено"
+
+    table = models.ForeignKey(Table, related_name="reservations", on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="bookings",
-        verbose_name="Пользователь"
+        related_name="reservations",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
-    table = models.ForeignKey(
-        Table,
-        on_delete=models.CASCADE,
-        related_name="bookings",
-        verbose_name="Стол"
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30)
+    date = models.DateField()
+    time = models.TimeField()
+    party_size = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(20)]
     )
-    guests = models.PositiveIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(20)],
-        verbose_name="Количество гостей"
-    )
-    date = models.DateField(verbose_name="Дата")
-    start_time = models.TimeField(verbose_name="Начало")
-    end_time = models.TimeField(verbose_name="Окончание")
-    comment = models.CharField(max_length=255, blank=True, verbose_name="Комментарий")
+    notes = models.TextField(blank=True)
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="new", verbose_name="Статус"
+        max_length=20, choices=Status.choices, default=Status.PENDING
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ReservationQuerySet.as_manager()
 
     class Meta:
-        ordering = ["-date", "-start_time"]
-        indexes = [models.Index(fields=["date", "start_time", "end_time", "table"])]
-        verbose_name = "Бронь"
-        verbose_name_plural = "Брони"
+        ordering = ["-date", "-time"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["table", "date", "time"],
+                condition=~models.Q(status="cancelled"),
+                name="unique_active_table_booking",
+            )
+        ]
+        verbose_name = "Бронирование"
+        verbose_name_plural = "Бронирования"
 
-    def __str__(self):
-        return f"{self.user} | {self.table} | {self.date} {self.start_time}-{self.end_time}"
+    def __str__(self) -> str:
+        return f"Бронирование для {self.name} на {self.date} в {self.time}"
+
+    def clean(self) -> None:
+        super().clean()
+        if self.party_size > self.table.capacity:
+            raise ValidationError(
+                {"party_size": "Количество гостей превышает вместимость столика."}
+            )
+
+        if self.date < timezone.localdate():
+            raise ValidationError({"date": "Нельзя выбрать прошедшую дату."})
+
+    def cancel(self) -> None:
+        self.status = self.Status.CANCELLED
+        self.save(update_fields=["status", "updated_at"])
