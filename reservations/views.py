@@ -44,7 +44,7 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
         reservation.user = self.request.user
         reservation.full_clean()
         reservation.save()
-        messages.success(self.request, "Reservation request submitted successfully.")
+        messages.success(self.request, "Заявка на бронирование успешно отправлена.")
         self.object = reservation
         return HttpResponseRedirect(self.get_success_url())
 
@@ -88,7 +88,7 @@ class ReservationUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, "Reservation updated successfully.")
+        messages.success(self.request, "Бронирование успешно обновлено.")
         return super().form_valid(form)
 
 
@@ -98,13 +98,13 @@ class ReservationCancelView(LoginRequiredMixin, View):
             pk=kwargs.get("pk"), user=request.user
         ).first()
         if not reservation:
-            messages.error(request, "Reservation not found.")
+            messages.error(request, "Бронирование не найдено.")
             return HttpResponseRedirect(reverse("reservations:list"))
 
         if reservation.status == Reservation.Status.CANCELLED:
-            messages.info(request, "Reservation is already cancelled.")
+            messages.info(request, "Бронирование уже отменено.")
         else:
             reservation.cancel()
-            messages.success(request, "Reservation cancelled.")
+            messages.success(request, "Бронирование отменено.")
 
         return HttpResponseRedirect(reverse("reservations:list"))

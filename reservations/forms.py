@@ -35,13 +35,23 @@ class ReservationForm(forms.ModelForm):
             ),
             "notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
         }
+        labels = {
+            "table": "Столик",
+            "name": "Имя",
+            "email": "Электронная почта",
+            "phone": "Телефон",
+            "date": "Дата",
+            "time": "Время",
+            "party_size": "Количество гостей",
+            "notes": "Комментарии",
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user", None)
         available_tables = kwargs.pop("available_tables", None)
         super().__init__(*args, **kwargs)
         self.fields["table"].queryset = available_tables or Table.objects.all()
-        self.fields["table"].empty_label = "Select a table"
+        self.fields["table"].empty_label = "Выберите столик"
 
         if self.user and self.user.is_authenticated:
             self.fields["name"].initial = self.user.get_full_name() or self.user.username
@@ -54,7 +64,9 @@ class ReservationForm(forms.ModelForm):
         time = cleaned_data.get("time")
 
         if date and date < timezone.localdate():
-            raise forms.ValidationError("Reservations cannot be made for past dates.")
+            raise forms.ValidationError(
+                "Нельзя бронировать столики на прошедшие даты."
+            )
 
         if table and date and time:
             conflicts = (
@@ -64,13 +76,14 @@ class ReservationForm(forms.ModelForm):
             )
             if conflicts.exists():
                 raise forms.ValidationError(
-                    "The selected table is not available for the chosen time."
+                    "Выбранный столик недоступен на указанное время."
                 )
 
         party_size = cleaned_data.get("party_size")
         if table and party_size and party_size > table.capacity:
             self.add_error(
-                "party_size", "Selected table cannot accommodate your party size."
+                "party_size",
+                "Выбранный столик не рассчитан на такое количество гостей.",
             )
 
         return cleaned_data
