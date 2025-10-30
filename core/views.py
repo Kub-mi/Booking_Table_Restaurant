@@ -20,7 +20,10 @@ class HomePageView(FormView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, "Thank you! We will get back to you shortly.")
+        messages.success(
+            self.request,
+            "Спасибо! Мы свяжемся с вами в ближайшее время.",
+        )
         return super().form_valid(form)
 
 

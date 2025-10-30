@@ -8,11 +8,22 @@ class ContactForm(forms.ModelForm):
         model = ContactSubmission
         fields = ["name", "email", "message"]
         widgets = {
-            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Your name"}),
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Ваше имя"}
+            ),
             "email": forms.EmailInput(
-                attrs={"class": "form-control", "placeholder": "your@email.com"}
+                attrs={"class": "form-control", "placeholder": "ivanov@example.com"}
             ),
             "message": forms.Textarea(
-                attrs={"class": "form-control", "rows": 4, "placeholder": "How can we help you?"}
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Чем мы можем помочь?",
+                }
             ),
+        }
+        labels = {
+            "name": "Имя",
+            "email": "Электронная почта",
+            "message": "Сообщение",
         }

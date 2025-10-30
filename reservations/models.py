@@ -18,7 +18,7 @@ class Table(models.Model):
         ordering = ["name"]
 
     def __str__(self) -> str:
-        return f"{self.name} ({self.capacity} guests)"
+        return f"{self.name} ({self.capacity} мест)"
 
 
 class ReservationQuerySet(models.QuerySet):
@@ -34,9 +34,9 @@ class Reservation(models.Model):
     """A reservation made for a specific table and time slot."""
 
     class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        CONFIRMED = "confirmed", "Confirmed"
-        CANCELLED = "cancelled", "Cancelled"
+        PENDING = "pending", "В ожидании"
+        CONFIRMED = "confirmed", "Подтверждено"
+        CANCELLED = "cancelled", "Отменено"
 
     table = models.ForeignKey(Table, related_name="reservations", on_delete=models.CASCADE)
     user = models.ForeignKey(
@@ -74,15 +74,19 @@ class Reservation(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"Reservation for {self.name} on {self.date} at {self.time}"
+        return f"Бронирование для {self.name} на {self.date} в {self.time}"
 
     def clean(self) -> None:
         super().clean()
         if self.party_size > self.table.capacity:
-            raise ValidationError({"party_size": "Party size exceeds table capacity."})
+            raise ValidationError(
+                {"party_size": "Количество гостей превышает вместимость столика."}
+            )
 
         if self.date < timezone.localdate():
-            raise ValidationError({"date": "Reservation date cannot be in the past."})
+            raise ValidationError(
+                {"date": "Дата бронирования не может быть в прошлом."}
+            )
 
     def cancel(self) -> None:
         self.status = self.Status.CANCELLED
