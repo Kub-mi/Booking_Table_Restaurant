@@ -44,3 +44,4 @@ class ProfileView(LoginRequiredMixin, FormView):
         form.save()
         messages.success(self.request, "Profile updated successfully.")
         return super().form_valid(form)
+
