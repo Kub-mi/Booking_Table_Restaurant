@@ -1,0 +1,24 @@
+body {
+    font-family: 'Inter', Arial, sans-serif;
+}
+
+.hero {
+    background: linear-gradient(135deg, rgba(33,37,41,0.85), rgba(52,58,64,0.85)),
+    url('https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1600&q=80') center/cover;
+    color: #fff;
+    padding: 6rem 0;
+    border-radius: 1rem;
+}
+
+.service-card {
+    transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175);
+}
+
+.table-availability {
+    font-size: 0.95rem;
+}
