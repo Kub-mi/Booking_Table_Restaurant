@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView, TemplateView
 
 from .forms import ContactForm
@@ -20,7 +21,9 @@ class HomePageView(FormView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, "Thank you! We will get back to you shortly.")
+        messages.success(
+            self.request, _("Спасибо! Мы свяжемся с вами в ближайшее время.")
+        )
         return super().form_valid(form)
 
 

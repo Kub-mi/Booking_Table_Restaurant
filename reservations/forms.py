@@ -1,6 +1,7 @@
 from django import forms
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_time
+from django.utils.translation import gettext_lazy as _
 
 from .models import Reservation, Table
 
@@ -41,7 +42,7 @@ class ReservationForm(forms.ModelForm):
         available_tables = kwargs.pop("available_tables", None)
         super().__init__(*args, **kwargs)
         self.fields["table"].queryset = available_tables or Table.objects.all()
-        self.fields["table"].empty_label = "Select a table"
+        self.fields["table"].empty_label = _("Выберите стол")
 
         if self.user and self.user.is_authenticated:
             self.fields["name"].initial = self.user.get_full_name() or self.user.username
@@ -54,7 +55,9 @@ class ReservationForm(forms.ModelForm):
         time = cleaned_data.get("time")
 
         if date and date < timezone.localdate():
-            raise forms.ValidationError("Reservations cannot be made for past dates.")
+            raise forms.ValidationError(
+                _("Нельзя создать бронирование на прошедшую дату.")
+            )
 
         if table and date and time:
             conflicts = (
@@ -64,13 +67,13 @@ class ReservationForm(forms.ModelForm):
             )
             if conflicts.exists():
                 raise forms.ValidationError(
-                    "The selected table is not available for the chosen time."
+                    _("Выбранный стол недоступен в указанное время.")
                 )
 
         party_size = cleaned_data.get("party_size")
         if table and party_size and party_size > table.capacity:
             self.add_error(
-                "party_size", "Selected table cannot accommodate your party size."
+                "party_size", _("Выбранный стол не вмещает указанное количество гостей.")
             )
 
         return cleaned_data
