@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}About us | Booking Table Restaurant{% endblock %}
+{% block title %}О нас | Ресторан Booking Table{% endblock %}
 
 {% block content %}
 <section class="mb-5">
     <div class="row">
         <div class="col-lg-8">
-            <h1 class="fw-bold mb-3">Our story</h1>
-            <p>{{ restaurant.description|default:'Founded by passionate food lovers, our restaurant blends contemporary techniques with classic recipes to deliver a memorable dining journey.' }}</p>
+            <h1 class="fw-bold mb-3">Наша история</h1>
+            <p>{{ restaurant.description|default:'Наш ресторан, созданный энтузиастами гастрономии, соединяет современные техники и классические рецепты, чтобы подарить незабываемые впечатления.' }}</p>
             {% if restaurant.mission %}
                 <div class="mt-4">
-                    <h3 class="h5 fw-bold">Our mission</h3>
+                    <h3 class="h5 fw-bold">Наша миссия</h3>
                     <p>{{ restaurant.mission }}</p>
                 </div>
             {% endif %}
@@ -18,7 +18,7 @@
         <div class="col-lg-4">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Visit us</h5>
+                    <h5 class="card-title">Приходите к нам</h5>
                     <ul class="list-unstyled mb-0">
                         {% if restaurant.address %}<li class="mb-2"><i class="bi bi-geo-alt text-primary me-2"></i>{{ restaurant.address }}</li>{% endif %}
                         {% if restaurant.phone %}<li class="mb-2"><i class="bi bi-telephone text-primary me-2"></i>{{ restaurant.phone }}</li>{% endif %}
@@ -32,7 +32,7 @@
 </section>
 
 <section>
-    <h2 class="fw-bold mb-4">The team</h2>
+    <h2 class="fw-bold mb-4">Наша команда</h2>
     <div class="row g-4">
         {% for member in team_members %}
             <div class="col-md-4">
@@ -43,13 +43,13 @@
                     <div class="card-body">
                         <h5 class="card-title mb-1">{{ member.name }}</h5>
                         <p class="text-primary mb-2">{{ member.role }}</p>
-                        <p class="card-text text-muted">{{ member.bio|default:'Biography coming soon.' }}</p>
+                        <p class="card-text text-muted">{{ member.bio|default:'Биография появится позже.' }}</p>
                     </div>
                 </div>
             </div>
         {% empty %}
             <div class="col-12">
-                <div class="alert alert-light border">We are gathering stories about our team. Stay tuned!</div>
+                <div class="alert alert-light border">Мы собираем истории о нашей команде. Следите за обновлениями!</div>
             </div>
         {% endfor %}
     </div>

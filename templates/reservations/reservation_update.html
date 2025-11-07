@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Update reservation | Booking Table Restaurant{% endblock %}
+{% block title %}Изменить бронирование | Ресторан Booking Table{% endblock %}
 
 {% block content %}
-<h1 class="fw-bold mb-4">Update reservation</h1>
+<h1 class="fw-bold mb-4">Изменить бронирование</h1>
 <form method="post" class="row g-3">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -48,8 +48,8 @@
         {{ form.notes.errors }}
     </div>
     <div class="col-12 d-flex gap-2">
-        <button type="submit" class="btn btn-primary">Save changes</button>
-        <a class="btn btn-outline-secondary" href="{% url 'reservations:list' %}">Back</a>
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a class="btn btn-outline-secondary" href="{% url 'reservations:list' %}">Назад</a>
     </div>
 </form>
 {% endblock %}

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, ListView, UpdateView
 
@@ -44,7 +45,9 @@ class ReservationCreateView(LoginRequiredMixin, CreateView):
         reservation.user = self.request.user
         reservation.full_clean()
         reservation.save()
-        messages.success(self.request, "Reservation request submitted successfully.")
+        messages.success(
+            self.request, _("Заявка на бронирование успешно отправлена.")
+        )
         self.object = reservation
         return HttpResponseRedirect(self.get_success_url())
 
@@ -88,7 +91,7 @@ class ReservationUpdateView(LoginRequiredMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        messages.success(self.request, "Reservation updated successfully.")
+        messages.success(self.request, _("Бронирование успешно обновлено."))
         return super().form_valid(form)
 
 
@@ -98,13 +101,13 @@ class ReservationCancelView(LoginRequiredMixin, View):
             pk=kwargs.get("pk"), user=request.user
         ).first()
         if not reservation:
-            messages.error(request, "Reservation not found.")
+            messages.error(request, _("Бронирование не найдено."))
             return HttpResponseRedirect(reverse("reservations:list"))
 
         if reservation.status == Reservation.Status.CANCELLED:
-            messages.info(request, "Reservation is already cancelled.")
+            messages.info(request, _("Бронирование уже отменено."))
         else:
             reservation.cancel()
-            messages.success(request, "Reservation cancelled.")
+            messages.success(request, _("Бронирование отменено."))
 
         return HttpResponseRedirect(reverse("reservations:list"))

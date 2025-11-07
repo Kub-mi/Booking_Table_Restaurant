@@ -44,7 +44,10 @@ class HomePageViewTests(TestCase):
         submission = ContactSubmission.objects.get()
         self.assertEqual(submission.name, "Bob")
         messages = [message.message for message in get_messages(response.wsgi_request)]
-        self.assertIn("Thank you!", " ".join(messages))
+        self.assertIn(
+            "Спасибо! Мы свяжемся с вами в ближайшее время.",
+            " ".join(messages),
+        )
 
 
 class AboutPageViewTests(TestCase):

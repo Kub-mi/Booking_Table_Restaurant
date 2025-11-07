@@ -28,7 +28,7 @@ class ReservationModelTests(TestCase):
             time=self.time,
             party_size=2,
         )
-        self.assertIn("Reservation for John", str(reservation))
+        self.assertIn("Бронирование для John", str(reservation))
 
     def test_clean_validates_party_size(self):
         reservation = Reservation(
@@ -41,7 +41,7 @@ class ReservationModelTests(TestCase):
             party_size=10,
         )
         with self.assertRaisesMessage(
-            ValidationError, "Party size exceeds table capacity."
+            ValidationError, "Количество гостей превышает вместимость стола."
         ):
             reservation.full_clean()
 
@@ -56,7 +56,7 @@ class ReservationModelTests(TestCase):
             party_size=2,
         )
         with self.assertRaisesMessage(
-            ValidationError, "Reservation date cannot be in the past."
+            ValidationError, "Дата бронирования не может быть в прошлом."
         ):
             reservation.full_clean()
 
@@ -140,11 +140,14 @@ class ReservationFormTests(TestCase):
         )
         self.assertFalse(form.is_valid())
         self.assertIn(
-            "The selected table is not available for the chosen time.",
+            "Выбранный стол недоступен в указанное время.",
             form.non_field_errors(),
         )
         self.assertIn("party_size", form.errors)
-        self.assertIn("Party size", form.errors["party_size"][0])
+        self.assertIn(
+            "Количество гостей превышает вместимость стола.",
+            form.errors["party_size"],
+        )
 
     def test_parse_filters_handles_invalid_values(self):
         date, time, party = ReservationForm.parse_filters({
@@ -216,7 +219,7 @@ class ReservationViewTests(TestCase):
         reservation = Reservation.objects.get()
         self.assertEqual(reservation.user, self.user)
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("Reservation request submitted successfully.", messages)
+        self.assertIn("Заявка на бронирование успешно отправлена.", messages)
 
     def test_list_view_returns_user_reservations(self):
         other = get_user_model().objects.create_user(
@@ -303,12 +306,12 @@ class ReservationViewTests(TestCase):
             follow=True,
         )
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("Reservation updated successfully.", messages)
+        self.assertIn("Бронирование успешно обновлено.", messages)
 
     def test_cancel_view_handles_missing_reservation_and_success(self):
         response = self.client.post(reverse("reservations:cancel", args=[999]), follow=True)
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("Reservation not found.", messages)
+        self.assertIn("Бронирование не найдено.", messages)
 
         reservation = Reservation.objects.create(
             table=self.table_large,
@@ -326,7 +329,7 @@ class ReservationViewTests(TestCase):
         reservation.refresh_from_db()
         self.assertEqual(reservation.status, Reservation.Status.CANCELLED)
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("Reservation cancelled.", messages)
+        self.assertIn("Бронирование отменено.", messages)
 
     def test_cancel_view_reports_already_cancelled(self):
         reservation = Reservation.objects.create(
@@ -344,4 +347,4 @@ class ReservationViewTests(TestCase):
             reverse("reservations:cancel", args=[reservation.pk]), follow=True
         )
         messages = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertIn("Reservation is already cancelled.", messages)
+        self.assertIn("Бронирование уже отменено.", messages)

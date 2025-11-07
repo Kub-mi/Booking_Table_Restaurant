@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Book a table | Booking Table Restaurant{% endblock %}
+{% block title %}Забронировать столик | Ресторан Booking Table{% endblock %}
 
 {% block content %}
 <div class="row g-4">
     <div class="col-lg-7">
-        <h1 class="fw-bold mb-3">Reserve your table</h1>
-        <p class="text-muted">Choose your preferred date and time. We will confirm your reservation shortly.</p>
+        <h1 class="fw-bold mb-3">Забронируйте стол</h1>
+        <p class="text-muted">Выберите удобные дату и время. Мы подтвердим бронирование в ближайшее время.</p>
         <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
             {{ form.non_field_errors }}
@@ -55,40 +55,40 @@
                 {{ form.notes.errors }}
             </div>
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Submit reservation</button>
+                <button type="submit" class="btn btn-primary btn-lg">Отправить заявку</button>
             </div>
         </form>
     </div>
     <div class="col-lg-5">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h5 class="card-title">Available tables</h5>
-                <p class="text-muted">Filter by date, time and party size to see which tables fit your needs.</p>
+                <h5 class="card-title">Доступные столы</h5>
+                <p class="text-muted">Отфильтруйте по дате, времени и количеству гостей, чтобы увидеть подходящие варианты.</p>
                 <form method="get" class="row g-2 mb-3">
                     <div class="col-12">
-                        <label class="form-label" for="id_filter_date">Date</label>
+                        <label class="form-label" for="id_filter_date">Дата</label>
                         <input type="date" name="date" id="id_filter_date" value="{{ filters.date }}" class="form-control">
                     </div>
                     <div class="col-6">
-                        <label class="form-label" for="id_filter_time">Time</label>
+                        <label class="form-label" for="id_filter_time">Время</label>
                         <input type="time" name="time" id="id_filter_time" value="{{ filters.time }}" class="form-control">
                     </div>
                     <div class="col-6">
-                        <label class="form-label" for="id_filter_party">Guests</label>
+                        <label class="form-label" for="id_filter_party">Гостей</label>
                         <input type="number" name="party_size" id="id_filter_party" value="{{ filters.party_size }}" min="1" max="20" class="form-control">
                     </div>
                     <div class="col-12 d-grid">
-                        <button class="btn btn-outline-primary" type="submit">Check availability</button>
+                        <button class="btn btn-outline-primary" type="submit">Проверить доступность</button>
                     </div>
                 </form>
                 <ul class="list-group list-group-flush table-availability">
                     {% for table in available_tables %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span>{{ table.name }}</span>
-                            <span class="badge bg-primary rounded-pill">{{ table.capacity }} guests</span>
+                            <span class="badge bg-primary rounded-pill">{{ table.capacity }} гостей</span>
                         </li>
                     {% empty %}
-                        <li class="list-group-item">No tables match the selected filters.</li>
+                        <li class="list-group-item">Нет столов, подходящих под выбранные параметры.</li>
                     {% endfor %}
                 </ul>
             </div>
